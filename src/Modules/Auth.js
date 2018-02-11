@@ -24,6 +24,29 @@ const authenticate = (email, password) => {
     })
 };
 
+const register = (email, password, password_confirmation) => {
+    const path = apiUrl + '/auth';
+    return new Promise((resolve, reject) => {
+        axios.post(path, {
+            email: email,
+            password: password,
+            password_confirmation: password_confirmation
+        })
+            .then(response => {
+                console.log(response);
+                sessionStorage.setItem('current_user', JSON.stringify({id: response.data.data.id}));
+                storeAuthHeaders(response).then(() => {
+                    resolve({
+                        authenticated: true
+                    })
+                });
+            })
+            .catch(error => {
+                reject(error)
+            });
+    })
+};
+
 const deAuthenticate = () => {
     const path = apiUrl + '/auth/sign_out';
     return new Promise((resolve, reject) => {
@@ -64,4 +87,4 @@ const getAuthHeaders = () => {
     return JSON.parse(sessionStorage.getItem('credentials'));
 };
 
-export {apiUrl, authenticate, deAuthenticate, storeAuthHeaders, getAuthHeaders}
+export {apiUrl, authenticate, register, deAuthenticate, storeAuthHeaders, getAuthHeaders}
