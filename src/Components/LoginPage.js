@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {authenticate} from '../Modules/Auth'
+import {authenticate, register} from '../Modules/Auth'
 import EventEmitter from '../Modules/EventEmitter'
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
-
 
 
 class Login extends Component {
@@ -11,6 +10,7 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
+            password_confirmation: '',
             authenticated: false,
             showRegistrationForm: false
         }
@@ -19,6 +19,14 @@ class Login extends Component {
 
     handleLogin() {
         authenticate(this.state.email, this.state.password).then(resp => {
+            this.setState(resp);
+            console.log(this.state);
+            EventEmitter.publish('authenticate.update', this.state.authenticated);
+        });
+    }
+
+    handleRegistration() {
+        register(this.state.email, this.state.password, this.state.password).then(resp => {
             this.setState(resp);
             console.log(this.state);
             EventEmitter.publish('authenticate.update', this.state.authenticated);
@@ -47,14 +55,14 @@ class Login extends Component {
                         <Input type="email" name="email" id="exampleEmail"
                                placeholder="email"
                                value={this.state.email}
-                               onChange={(e) => this.setState( {email: e.target.value})}/>
+                               onChange={(e) => this.setState({email: e.target.value})}/>
                     </FormGroup>
                     <FormGroup>
                         <Label for="examplePassword">Password</Label>
                         <Input type="password" name="password" id="examplePassword"
                                placeholder="password"
                                value={this.state.password}
-                               onChange={(e) => this.setState( {password: e.target.value})}/>
+                               onChange={(e) => this.setState({password: e.target.value})}/>
                     </FormGroup>
                     <Button onClick={() => this.handleLogin()} id="button-login" size="md" block>Login</Button>
                 </Form>
@@ -67,23 +75,23 @@ class Login extends Component {
                         <Input type="email" name="email" id="exampleEmail"
                                placeholder="email"
                                value={this.state.email}
-                               onChange={(e) => this.setState( {email: e.target.value})}/>
+                               onChange={(e) => this.setState({email: e.target.value})}/>
                     </FormGroup>
                     <FormGroup>
                         <Label for="examplePassword">Password</Label>
                         <Input type="password" name="password" id="examplePassword"
                                placeholder="password"
                                value={this.state.password}
-                               onChange={(e) => this.setState( {password: e.target.value})}/>
+                               onChange={(e) => this.setState({password: e.target.value})}/>
                     </FormGroup>
                     <FormGroup>
                         <Label for="examplePasswordConfirmation">Password Confirmation</Label>
                         <Input type="password" name="password-confirmation" id="examplePasswordConfirmation"
                                placeholder="password confirmation"
                                value={this.state.password.confirmation}
-                               onChange={(e) => this.setState( {password: e.target.value})}/>
+                               onChange={(e) => this.setState({password: e.target.value})}/>
                     </FormGroup>
-                    <Button onClick={() => this.handleLogin()} id="button-login" size="md" block>Sign up</Button>
+                    <Button onClick={() => this.handleRegistration()} id="button-login" size="md" block>Sign up</Button>
                 </Form>
             )
         }
@@ -93,7 +101,7 @@ class Login extends Component {
                 <div className='col-10 col-sm-7 col-md-5 col-lg-4' id="login">
                     {form}
                     <Button onClick={this.toggleRegistrationForm.bind(this)} id="button-signup" size="sm" block>
-                        {this.state.showRegistrationForm ? 'Login' : 'Create Account' }
+                        {this.state.showRegistrationForm ? 'Login' : 'Create Account'}
                     </Button>
 
                 </div>
